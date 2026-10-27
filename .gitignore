@@ -1,0 +1,13 @@
+.DS_Store
+.env
+.env.local
+*.pem
+*-key.json
+credentials.json
+__pycache__/
+*.pyc
+.venv/
+venv/
+.handoff/
+.cursor/
+CLAUDE.md

@@ -1,0 +1,13 @@
+# Pinned on October 27, 2026 from the Python Package Index.
+# Each version below had been published for at least two weeks on that date.
+# google-cloud-compute 1.56.0 was uploaded on October 15, 2026, so it is not
+# used here. 1.55.0 was uploaded on October 1, 2026.
+#
+# These libraries are for the calls inside the project. Creating the project
+# itself goes through the gcloud command-line interface, not these packages.
+
+google-auth==2.62.0
+google-cloud-compute==1.55.0
+google-cloud-iam==2.26.0
+google-cloud-resource-manager==1.19.0
+google-cloud-secret-manager==2.31.0
