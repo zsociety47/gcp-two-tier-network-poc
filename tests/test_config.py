@@ -128,12 +128,13 @@ class LabelTests(unittest.TestCase):
 
 
 class ServiceAccountAndAddressTests(unittest.TestCase):
-    def test_design_database_account_is_too_short(self):
-        self.assertEqual(config.SA_DB, "sa-db")
-        with self.assertRaises(ConfigError):
-            config.validate_service_account_id(config.SA_DB)
+    def test_database_account_id_meets_the_six_character_rule(self):
+        self.assertEqual(config.SA_DB, "sa-db-01")
+        config.validate_service_account_id(config.SA_DB)
         config.validate_service_account_id(config.SA_WEB)
         config.validate_service_account_id(config.SA_TEST)
+        with self.assertRaises(ConfigError):
+            config.validate_service_account_id("sa-db")
 
     def test_fixed_addresses_avoid_the_reserved_ends(self):
         for subnet in config.SUBNETS:
@@ -197,12 +198,12 @@ class PlanTests(unittest.TestCase):
             code = main(["--plan"], env_path=Path("/nonexistent/.env-twotier"))
         self.assertEqual(code, 0)
 
-    def test_live_deploy_is_refused(self):
+    def test_live_deploy_without_env_is_refused(self):
         error = io.StringIO()
         with redirect_stderr(error):
-            code = main([])
-        self.assertEqual(code, 2)
-        self.assertIn("--plan", error.getvalue())
+            code = main([], env_path=Path("/nonexistent/.env-twotier"))
+        self.assertEqual(code, 1)
+        self.assertIn("GCP_BILLING_ACCOUNT", error.getvalue())
 
 
 class GcloudCommandTests(unittest.TestCase):

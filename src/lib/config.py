@@ -59,7 +59,9 @@ IP_WEB = "ip-web-01"
 IP_NAT = "ip-nat-01"
 
 SA_WEB = "sa-web"
-SA_DB = "sa-db"
+# The design name sa-db is 5 characters. The Identity and Access Management
+# API requires 6 to 30, so the id is one step longer.
+SA_DB = "sa-db-01"
 SA_TEST = "sa-test"
 
 SECRET_NAME = "twotier-db-password"
@@ -81,6 +83,7 @@ APIS = (
     "compute.googleapis.com",
     "iam.googleapis.com",
     "iap.googleapis.com",
+    "oslogin.googleapis.com",
     "secretmanager.googleapis.com",
 )
 

@@ -1,17 +1,18 @@
-"""Plan the two-tier network proof of concept.
+"""Plan or create the two-tier network proof of concept.
 
 Run from the repository root:
 
     python -m src.deploy --plan
+    python -m src.deploy
 
 `--plan` prints the names and calls nothing. It works when .env does not
-exist yet. The live deploy is a later phase and needs your approval before
-it creates a Google Cloud project.
+exist yet. Without `--plan`, the script creates the project from `.env`.
 """
 
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
 
@@ -83,10 +84,7 @@ def plan_lines(settings: Settings) -> list[str]:
         "4. Wait until the first Compute Engine call is accepted. Retry only not-ready errors.",
         "5. Delete the default network and its allow rules.",
         f"6. Service accounts: {SA_WEB}, {SA_DB}, {SA_TEST}.",
-        (
-            f"   {SA_DB} is {len(SA_DB)} characters. The Identity and Access Management "
-            "API requires 6 to 30. This plan does not rename it."
-        ),
+        "   The database account is sa-db-01. sa-db is too short for the API.",
         (
             f"7. Secret {SECRET_NAME}, one replica in the region. "
             f"Readers: {SA_WEB} and {SA_DB} only. The password is not printed."
@@ -165,10 +163,15 @@ def print_plan(settings: Settings, out=None) -> None:
 def _account_ids_that_fit() -> list[str]:
     """Used only so a bad rename of a legal id fails the plan before a live run."""
     fitting = []
-    for account_id in (SA_WEB, SA_TEST):
+    for account_id in (SA_WEB, SA_DB, SA_TEST):
         validate_service_account_id(account_id)
         fitting.append(account_id)
     return fitting
+
+
+def _safe_error(error: BaseException) -> str:
+    """Drop an account address before an error is printed."""
+    return re.sub(r"[\w.+-]+@[\w.-]+", "[account]", str(error))
 
 
 def main(argv: list[str] | None = None, env_path: Path | None = None) -> int:
@@ -182,12 +185,26 @@ def main(argv: list[str] | None = None, env_path: Path | None = None) -> int:
     )
     args = parser.parse_args(argv)
     if not args.plan:
-        print(
-            "Live deploy is not part of this phase. "
-            "Run: python -m src.deploy --plan",
-            file=sys.stderr,
-        )
-        return 2
+        try:
+            settings = load_settings(env_path)
+        except ConfigError as error:
+            print(str(error), file=sys.stderr)
+            return 1
+        if settings.project_id is None or settings.billing_account is None:
+            print(
+                "Copy .env.example to .env and set GCP_PROJECT_ID and GCP_BILLING_ACCOUNT.",
+                file=sys.stderr,
+            )
+            return 1
+        from src.lib.live import LiveCloud
+        from src.lib.orchestrate import DeployError, run_deploy
+
+        try:
+            run_deploy(LiveCloud(settings))
+        except Exception as error:
+            print(type(error).__name__ + ": " + _safe_error(error), file=sys.stderr)
+            return 1
+        return 0
     try:
         _account_ids_that_fit()
         settings = load_settings(env_path)
