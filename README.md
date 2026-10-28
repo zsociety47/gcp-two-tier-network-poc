@@ -43,7 +43,7 @@ Screenshots of the console are not in the repository yet. Each of those image li
    - `project` = `02-gcp-two-tier-network-poc`
    - `created` = the time you created it, such as `2026-10-27t05-25-00z`
 
-<!-- ![Project page with the four labels](docs/images/step-01-project.png) -->
+![Project page with the four labels](docs/images/step-01-project.png)
 
 ### Step 2: Link billing
 
@@ -51,7 +51,7 @@ Screenshots of the console are not in the repository yet. Each of those image li
 
 Link the billing account. Crop the billing account id out of the shot.
 
-<!-- ![Billing linked, with the account id cropped](docs/images/step-02-billing.png) -->
+![Billing linked, with the account id cropped](docs/images/step-02-billing.png)
 
 ### Step 3: The network
 
@@ -69,7 +69,7 @@ Three subnets, all in `us-east1`, all with Private Google Access on:
 
 Google reserves the first two and last two addresses of a subnet. `.10` is outside that reservation.
 
-<!-- ![Three subnets with Private Google Access on](docs/images/step-03-subnets.png) -->
+![Three subnets with Private Google Access on](docs/images/step-03-subnets.png)
 
 ### Step 4: Firewall rules that name identities
 
@@ -88,7 +88,7 @@ The Identity-Aware Proxy (IAP) range is not "the internet." IAP checks who you a
 
 The explicit deny is not what blocks the test machine. Nothing allows the test machine to open port 5432, so the packet is dropped either way. The deny exists so those drops can be logged. A custom network has no built-in "allow everything inside the network" rule. The `default` network did, which is why it was deleted.
 
-<!-- ![Firewall rules with identities, the IAP range, and logging on the deny](docs/images/step-04-firewall.png) -->
+![Firewall rules with identities, the IAP range, and logging on the deny](docs/images/step-04-firewall.png)
 
 ### Step 5: The database has no public address
 
@@ -96,11 +96,11 @@ The explicit deny is not what blocks the test machine. Nothing allows the test m
 
 `vm-db-01` and `vm-test-01` have no external address. `vm-web-01` uses the reserved address `ip-web-01`. Cloud NAT (`nat-twotier-poc` on `router-twotier-poc`) uses `ip-nat-01` and serves `snet-db` only, so the database machine can install packages. The outbound address belongs to the gateway, not the machine.
 
-The database account is `sa-db-01`. The design name `sa-db` is five characters, and the Identity and Access Management API requires six. The architecture picture still says `sa-db`. The code is the name that was created.
+The database account is `sa-db-01`. The design name `sa-db` is five characters, and the Identity and Access Management API requires six.
 
-<!-- ![Database machine with no external address](docs/images/step-05-db-nic.png) -->
+![Database machine with no external address](docs/images/step-05-db-nic.png)
 
-<!-- ![Cloud NAT limited to snet-db](docs/images/step-06-nat.png) -->
+![Cloud NAT limited to snet-db](docs/images/step-06-nat.png)
 
 ### Step 6: The password stays in Secret Manager
 
@@ -108,7 +108,7 @@ The database account is `sa-db-01`. The design name `sa-db` is five characters, 
 
 The secret is `twotier-db-password`, with one replica in `us-east1`. The readers are `sa-web` and `sa-db-01`. The test account is not a reader. The value is generated in memory and never printed. Re-running the deploy does not add a second version.
 
-<!-- ![Secret policy with exactly two readers](docs/images/step-07-secret.png) -->
+![Secret policy with exactly two readers](docs/images/step-07-secret.png)
 
 ### Step 7: Open the page
 
@@ -124,7 +124,7 @@ python3 -m src.verify
 
 On October 27, 2026 that printed `9 passed, 0 failed`. Row 4 was `timeout`.
 
-<!-- ![Verify output, nine passed](docs/images/step-08-verify.png) -->
+![Verify output, nine passed](docs/images/step-08-verify.png)
 
 ---
 
@@ -172,7 +172,7 @@ Tear it down after the screenshots. Type the project id when asked. A wrong name
 
 ![Two-tier network: the web machine is the only one that can reach the database](docs/architecture/architecture.png)
 
-The print version is [architecture.pdf](docs/architecture/architecture.pdf). The picture still labels the database account `sa-db`. The account that was created is `sa-db-01`.
+The print version is [architecture.pdf](docs/architecture/architecture.pdf). The picture matches the created account, `sa-db-01`.
 
 ```mermaid
 flowchart LR
