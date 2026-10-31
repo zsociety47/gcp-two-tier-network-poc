@@ -132,19 +132,22 @@ On October 27, 2026 that printed `9 passed, 0 failed`. Row 4 was `timeout`.
 
 ### Run this as yourself
 
-The names committed here are this proof. A later operator replaces only the owner slot.
+The names committed in this repository are this proof of concept. Leave them. Put your owner word in the copy you run. A project id cannot be reused after it is deleted.
 
-| File | What to change |
+| Open this | Do this |
 |---|---|
-| [`.env.example`](.env.example) | `yourname01` in `GCP_PROJECT_ID`, then copy the file to `.env` and set the billing account id. `.env` is not committed. |
-| [`src/lib/config.py`](src/lib/config.py) | `OWNER_LABEL`, if the labels should carry your name instead of `zeon`. |
+| [`.env.example`](.env.example) | Copy to `.env` (gitignored). Replace `yourname01` in `GCP_PROJECT_ID`. Fill in `GCP_BILLING_ACCOUNT`. Do not copy my billing account id. |
+| [`src/lib/config.py`](src/lib/config.py) | Change `OWNER_LABEL` if the labels should carry your name instead of `zeon`. |
+
+```bash
+cp .env.example .env
+```
 
 **Prerequisites:** Python 3.11 or newer, the Google Cloud command-line interface, and `gcloud auth login`. The scripts take a user access token from that login and set this project as the quota project. They do not use Application Default Credentials. Sign in once in the terminal. The console sign-in is a separate browser login, and you need it for the screenshots.
 
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-cp .env.example .env
 ```
 
 Fill in `GCP_BILLING_ACCOUNT`. Change `GCP_PROJECT_ID` if `twotier-poc-zeon01` is already taken. Don't commit `.env`.
